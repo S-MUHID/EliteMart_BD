@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Customer Signup - EliteMart BD</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body.auth-page {
+            background: var(--bg);
+            margin: 0;
+            padding: 0;
+        }
+        .auth-page-content {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .auth-page header {
+            border-bottom: 3px solid var(--gold);
+        }
+        .auth-page-body {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        /* Custom top bar for signup page */
+        .signup-topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: var(--bg);
+            border-bottom: 3px solid var(--gold);
+            gap: 20px;
+        }
+        .signup-topbar-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .signup-topbar-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .signup-topbar-links a:hover {
+            color: var(--gold);
+        }
+        .signup-search-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            max-width: 400px;
+        }
+        .signup-search-container .searchbar {
+            flex: 1;
+        }
+        .signup-search-container .searchbar input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--gold);
+            border-radius: 6px;
+            background: rgba(0, 255, 255, 0.05);
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+        .signup-search-container .searchbar input::placeholder {
+            color: var(--muted);
+        }
+        .signup-search-container .searchbtn {
+            padding: 8px 16px;
+            background: var(--gold);
+            border: none;
+            border-radius: 6px;
+            color: #000;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .signup-search-container .searchbtn:hover {
+            background: #e0c200;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body class="auth-page">
+    <div class="auth-page-content">
+        <!-- Custom Top Bar -->
+        <div class="signup-topbar">
+            <ul class="signup-topbar-links">
+                <li><a href="order.html">📦 My Order</a></li>
+                <li><a href="cart.html">🛒 Cart</a></li>
+            </ul>
+            <div class="signup-search-container">
+                <div class="searchbar">
+                    <input type="text" placeholder="Search products..." id="searchInput">
+                </div>
+                <button class="searchbtn" id="searchBtn">🔍 Search</button>
+            </div>
+        </div>
+
+        <div class="auth-page-body">
+            <div class="glass-card" style="width: 100%; max-width: 480px; padding: 2rem; border-radius: 14px;">
+                
+                <!-- Header -->
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <h1 style="font-size: 1.8rem; font-weight: 700; color: var(--gold); margin: 0 0 0.5rem 0;">Create Account</h1>
+                    <p style="color: var(--muted); font-size: 0.95rem;">Join EliteMart & enjoy exclusive deals</p>
+                </div>
+
+                <div id="error" class="auth-error"></div>
+
+                <!-- Signup Form -->
+                <form style="display: block;">
+                    <!-- Name Input -->
+                    <div class="input-container" id="name-container">
+                        <label for="signupName" class="label">👤 Full Name</label>
+                        <input id="signupName" type="text" />
+                    </div>
+
+                    <!-- Phone Input -->
+                    <div class="input-container" id="phone-container">
+                        <label for="signupPhone" class="label">📱 Phone Number (Required)</label>
+                        <input id="signupPhone" type="tel" />
+                    </div>
+
+                    <!-- Email Input -->
+                    <div class="input-container" id="email-container">
+                        <label for="signupEmail" class="label">📧 Email Address (Optional)</label>
+                        <input id="signupEmail" type="email" />
+                    </div>
+
+                    <!-- Password Input -->
+                    <div class="input-container has-icon" id="password-container">
+                        <label for="signupPassword" class="label">🔐 Create Password</label>
+                        <input id="signupPassword" type="password" />
+                        <button type="button" id="togglePassword" class="input-icon-btn" aria-label="Toggle password visibility">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <!-- Confirm Password Input -->
+                    <div class="input-container has-icon" id="confirm-password-container">
+                        <label for="confirmPassword" class="label">✓ Confirm Password</label>
+                        <input id="confirmPassword" type="password" />
+                        <button type="button" id="toggleConfirmPassword" class="input-icon-btn" aria-label="Toggle password visibility">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <!-- Terms & Conditions -->
+                    <div style="margin-top: 1.5rem; margin-bottom: 1rem; padding: 1rem; background: rgba(0, 255, 255, 0.05); border-radius: 8px; border-left: 3px solid var(--gold);">
+                        <label style="display: flex; gap: 8px; color: var(--muted); font-size: 0.9rem; cursor: pointer;">
+                            <input type="checkbox" id="agreeTerms" style="cursor: pointer; margin-top: 2px;" />
+                            <span>I agree to the <a href="#" style="color: #00ffff; text-decoration: none;">Terms of Service</a> and <a href="#" style="color: #00ffff; text-decoration: none;">Privacy Policy</a></span>
+                        </label>
+                    </div>
+
+                    <!-- Create Account Button -->
+                    <button type="button" id="signupBtn" class="shimmer-btn" style="width: 100%; padding: 0.75rem; margin-top: 1rem; border-radius: 10px; font-weight: 600; color: white; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s;">
+                        CREATE ACCOUNT
+                    </button>
+                </form>
+
+                <!-- Login Link -->
+                <div class="link" style="margin-top: 1.5rem;">Already have an account? <a href="customer-login.html" style="color: var(--gold);">Login Here</a></div>
+
+                <!-- Divider -->
+                <hr class="divider" style="margin: 1rem 0;" />
+
+                <!-- Guest Checkout Option -->
+                <div style="text-align: center; color: #bbb; font-size: 0.9rem; margin-bottom: 0.5rem;">Or continue shopping as guest</div>
+                <div class="auth-actions"><button type="button" onclick="continueAsGuest()" class="btn btn-ghost" style="padding: 0.75rem;">Continue as Guest</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Search functionality
+        const searchBtn = document.getElementById('searchBtn');
+        const searchInput = document.getElementById('searchInput');
+
+        searchBtn?.addEventListener('click', () => {
+            const query = searchInput.value.trim();
+            if (query) {
+                window.location.href = `index.html?search=${encodeURIComponent(query)}`;
+            }
+        });
+
+        searchInput?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchBtn.click();
+            }
+        });
+
+        // Sliding Label/Focus Effect for Portal Style
+        function setupPortalInputs() {
+            document.querySelectorAll('.input-container input').forEach(input => {
+                const container = input.closest('.input-container');
+
+                // Initial check for 'filled' state on load
+                if (input.value.length > 0) {
+                    container.classList.add('filled');
+                }
+
+                input.addEventListener('focus', () => {
+                    container.classList.add('focused');
+                    container.classList.remove('filled');
+                });
+
+                input.addEventListener('blur', () => {
+                    container.classList.remove('focused');
+                    if (input.value.length > 0) {
+                        container.classList.add('filled');
+                    }
+                });
+
+                input.addEventListener('input', () => {
+                    if (input.value.length > 0) {
+                        container.classList.add('filled');
+                    } else {
+                        container.classList.remove('filled');
+                    }
+                });
+            });
+        }
+
+        // Password Toggle Functions
+        function setupPasswordToggles() {
+            const togglePassword = document.getElementById('togglePassword');
+            if (togglePassword) {
+                togglePassword.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const input = document.getElementById('signupPassword');
+                    const icon = togglePassword.querySelector('i');
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            }
+
+            const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+            if (toggleConfirmPassword) {
+                toggleConfirmPassword.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const input = document.getElementById('confirmPassword');
+                    const icon = toggleConfirmPassword.querySelector('i');
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        input.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            }
+        }
+
+        // Signup Logic
+        const signupBtn = document.getElementById('signupBtn');
+        const errorDiv = document.getElementById('error');
+
+        function showError(msg) {
+            errorDiv.textContent = msg;
+            errorDiv.style.display = 'block';
+            setTimeout(() => errorDiv.style.display = 'none', 3500);
+        }
+
+        signupBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('signupName').value.trim();
+            const phone = document.getElementById('signupPhone').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const agreeTerms = document.getElementById('agreeTerms').checked;
+
+            // Validation
+            if (!name) { showError('Full name is required'); return; }
+            if (!phone) { showError('Phone number is required'); return; }
+            if (!password) { showError('Password is required'); return; }
+            if (password.length < 6) { showError('Password must be at least 6 characters'); return; }
+            if (password !== confirmPassword) { showError('Passwords do not match'); return; }
+            if (!agreeTerms) { showError('You must agree to the terms and conditions'); return; }
+
+            // Email validation if provided
+            if (email && !isValidEmail(email)) { showError('Please enter a valid email address'); return; }
+
+            // Check for existing account
+            let users = JSON.parse(localStorage.getItem('customers') || '[]');
+            if (users.find(u => (u.email && u.email === email && email) || (u.phone && u.phone === phone))) {
+                showError('Account already exists with this email or phone');
+                return;
+            }
+
+            // Create account
+            users.push({ name, email: email || '', phone: phone, password: password });
+            localStorage.setItem('customers', JSON.stringify(users));
+
+            // Auto-login
+            sessionStorage.setItem('customerLoggedIn', 'true');
+            sessionStorage.setItem('customerEmail', email || '');
+            sessionStorage.setItem('customerName', name);
+
+            // Show success feedback
+            signupBtn.textContent = 'ACCOUNT CREATED. REDIRECTING...';
+            signupBtn.style.background = '#0b3d0b';
+            signupBtn.style.color = '#adffad';
+
+            setTimeout(() => {
+                const next = new URLSearchParams(location.search).get('next') || 'index.html';
+                location.href = next;
+            }, 1500);
+        });
+
+        // Email validation helper
+        function isValidEmail(email) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        }
+
+        // Continue as Guest
+        function continueAsGuest() {
+            sessionStorage.setItem('customerLoggedIn', 'false');
+            location.href = 'index.html';
+        }
+
+        // Initialize portal interactions on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            setupPortalInputs();
+            setupPasswordToggles();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EliteMart BD - Shopping Cart</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+    <script src="header.js"></script>
+    <!-- Header inserted by header.js -->
+    
+    <!-- Access Check Script -->
+    <script>
+        const isLoggedIn = sessionStorage.getItem('customerLoggedIn') === 'true';
+        if (!isLoggedIn) {
+            document.body.innerHTML = '';
+            const overlay = document.createElement('div');
+            overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #0b0b0b, #000); display: flex; align-items: center; justify-content: center; z-index: 9999;';
+            overlay.innerHTML = `
+                <div style="background: linear-gradient(135deg, #0f0f0f, #0a0a0a); border: 2px solid #333; border-radius: 14px; padding: 50px; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(217, 178, 74, 0.3);">
+                    <h2 style="color: #d9b24a; font-size: 1.8rem; margin: 0 0 10px 0; text-shadow: 0 0 10px rgba(217, 178, 74, 0.3);">🔐 Access Restricted</h2>
+                    <p style="color: #bdbdbd; margin: 20px 0; font-size: 1rem; line-height: 1.6;">Your shopping cart is only available after logging in. Please create an account or sign in to view your cart.</p>
+                    <div style="background: rgba(217, 178, 74, 0.1); padding: 20px; border-radius: 10px; border-left: 4px solid #d9b24a; margin: 20px 0;">
+                        <p style="color: #fff; margin: 0; font-weight: 600;">🛒 You can only access the cart after login</p>
+                    </div>
+                    <div style="display: flex; gap: 12px; margin-top: 30px;">
+                        <button onclick="location.href='customer-login.html'" style="flex: 1; padding: 12px; background: #d9b24a; color: #000; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.3s;">Login Now</button>
+                        <button onclick="location.href='customer-signup.html'" style="flex: 1; padding: 12px; background: #333; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s;">Create Account</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            throw new Error('Access restricted');
+        }
+    </script>
+
+    <div class="cart-container">
+        <h1 style="color: var(--gold); margin-bottom: 30px;">🛒 Shopping Cart</h1>
+        
+        <div style="display: grid; grid-template-columns: 1fr 450px; gap: 30px;">
+            <div class="cart-items"></div>
+            <div class="cart-summary"></div>
+        </div>
+    </div>
+
+    <footer>
+        © 2025 EliteMart BD • Trusted Fashion & Lifestyle • Cash on Delivery Available Nationwide
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        renderCart();
+        
+        // Update product count on home page
+        document.addEventListener('DOMContentLoaded', function() {
+            const count = document.querySelector('.grid')?.children.length || 0;
+            const counter = document.getElementById('productCount');
+            if (counter) counter.textContent = count;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - E-Commerce</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-bg: #0b0b0b;
+            --card-bg: #111111;
+            --gold: #d9b24a;
+            --text: #ffffff;
+            --text-light: #cccccc;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-container {
+            background-color: var(--card-bg);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(217, 178, 74, 0.15);
+            width: 100%;
+            max-width: 400px;
+            border: 2px solid var(--gold);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--gold);
+        }
+
+        .login-header p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: #1a1a1a;
+            border: 2px solid #333333;
+            color: var(--text);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 10px rgba(217, 178, 74, 0.2);
+            background-color: #222222;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--gold);
+            color: #000000;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: #e8c454;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(217, 178, 74, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .error-message {
+            display: none;
+            background-color: #8b0000;
+            color: #ffffff;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid #ff0000;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        .admin-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .login-container {
+                padding: 30px 20px;
+                border-radius: 10px;
+            }
+
+            .login-header h1 {
+                font-size: 24px;
+            }
+
+            .admin-icon {
+                font-size: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="admin-icon">🔐</div>
+            <h1>Admin Panel</h1>
+            <p>সংরক্ষিত প্রশাসনিক এলাকা</p>
+        </div>
+
+        <div class="error-message" id="errorMessage"></div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">ব্যবহারকারী নাম</label>
+                <input type="text" id="username" placeholder="admin" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">পাসওয়ার্ড</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="submit-btn">প্রবেশ করুন</button>
+        </form>
+
+        <div class="back-link">
+            <a href="index.html">← প্রধান পৃষ্ঠায় ফিরুন</a>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_USERNAME = 'admin';
+        const ADMIN_PASSWORD = 'admin123'; // পাসওয়ার্ড পরিবর্তন করুন
+
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // যদি ইতিমধ্যে লগইন করা থাকে তবে সরাসরি অ্যাডমিন পেজে যান
+        if (sessionStorage.getItem('adminLoggedIn') === 'true') {
+            window.location.href = 'mr_admin_login.html';
+        }
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                // সেশন স্টোরেজে লগইন স্ট্যাটাস সেট করুন
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                window.location.href = 'mr_admin_login.html';
+            } else {
+                errorMessage.textContent = '❌ ভুল ব্যবহারকারী নাম বা পাসওয়ার্ড!';
+                errorMessage.classList.add('show');
+                document.getElementById('password').value = '';
+                document.getElementById('password').focus();
+
+                // 3 সেকেন্ড পরে ত্রুটি বার্তা লুকিয়ে রাখুন
+                setTimeout(() => {
+                    errorMessage.classList.remove('show');
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

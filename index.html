@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EliteMart BD - Premium Fashion & Gadgets</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+    <script src="header.js"></script>
+    <!-- Access Restriction Check -->
+    <script>
+        const isLoggedIn = sessionStorage.getItem('customerLoggedIn') === 'true';
+        const restrictedPages = ['products', 'cart', 'order', 'orders', 'invoice'];
+        const currentPageName = location.pathname.split('/').pop().split('.')[0] || 'index';
+        
+        if (!isLoggedIn && restrictedPages.includes(currentPageName)) {
+            window.location.href = 'customer-login.html?next=' + encodeURIComponent(location.pathname + location.search);
+        }
+    </script>
+    <!-- Header inserted by header.js -->
+
+    <!-- Left drawer toggle (hamburger) and drawer markup -->
+    <button id="drawerToggle" aria-label="Open filters" style="display:none;" class="drawer-toggle">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </button>
+
+    <aside id="leftDrawer" class="left-drawer" aria-hidden="true">
+        <div class="drawer-content">
+            <button class="drawer-close" id="drawerClose" aria-label="Close">✕</button>
+            <div class="filter-section">
+                <h4>All Categories</h4>
+                <div class="catlist" id="drawerCategoryList"></div>
+            </div>
+
+            <div class="filter-section">
+                <h4>Price Filter</h4>
+                <select id="drawerPriceFilter" style="width:100%;padding:10px;border-radius:6px;border:1px solid #333;background:#121212;color:#fff;margin-top:8px;cursor:pointer;font-family:Poppins;">
+                    <option value="all">All Prices</option>
+                    <option value="low-to-high">Low to High</option>
+                    <option value="high-to-low">High to Low</option>
+                    <option value="under-1000">Under ৳1000</option>
+                    <option value="1000-5000">৳1000 - ৳5000</option>
+                    <option value="above-5000">Above ৳5000</option>
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <h4>Size Filter</h4>
+                <select id="drawerSizeFilter" style="width:100%;padding:10px;border-radius:6px;border:1px solid #333;background:#121212;color:#fff;margin-top:8px;cursor:pointer;font-family:Poppins;">
+                    <option value="all">All Sizes</option>
+                </select>
+            </div>
+        </div>
+        <div class="drawer-backdrop" id="drawerBackdrop"></div>
+    </aside>
+
+    <div class="container">
+        <aside class="sidebar">
+            <div class="filter-section">
+                <h4>Categories</h4>
+                <div class="catlist" id="categorySidebar">
+                    <!-- Categories will be populated dynamically from localStorage -->
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h4>Filter</h4>
+                <div class="small">Price Range</div>
+                <select id="priceFilter" onchange="filterByPrice(this.value)" style="width:100%;padding:10px;border-radius:6px;border:1px solid #333;background:#121212;color:#fff;margin-top:8px;cursor:pointer;font-family:Poppins;">
+                    <option value="all">All Prices</option>
+                    <option value="low-to-high">Low to High</option>
+                    <option value="high-to-low">High to Low</option>
+                    <option value="under-1000">Under ৳1000</option>
+                    <option value="1000-5000">৳1000 - ৳5000</option>
+                    <option value="above-5000">Above ৳5000</option>
+                </select>
+            </div>
+
+            <div class="filter-section" style="background: linear-gradient(135deg, #1a1a1a, #0f0f0f); border: 2px solid var(--gold); border-radius: 8px; padding: 15px;">
+                <h4 style="color: var(--gold);">⭐ Why Choose Us?</h4>
+                <div class="small" style="color: #ccc;">
+                    ✓ 100% Authentic<br>
+                    ✓ Best Prices<br>
+                    ✓ Fast Delivery<br>
+                    ✓ 7-Day Guarantee<br>
+                    ✓ Secure Payment
+                </div>
+            </div>
+        </aside>
+
+        <main class="main">
+            <!-- Hero Section (dynamic, managed from admin) -->
+            <div id="heroContainer" style="position: relative; overflow: hidden; border-radius: 12px; margin-bottom: 30px;">
+                <div id="heroSlides" style="display: flex; transition: transform 0.5s ease;">
+                    <!-- slides inserted dynamically -->
+                </div>
+                <!-- Prev / Next -->
+                <button id="heroPrev" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.6); color: #fff; border: none; padding: 10px 12px; border-radius: 8px; cursor: pointer;">◀</button>
+                <button id="heroNext" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.6); color: #fff; border: none; padding: 10px 12px; border-radius: 8px; cursor: pointer;">▶</button>
+                <!-- Indicators -->
+                <div id="heroIndicators" style="position: absolute; left: 50%; transform: translateX(-50%); bottom: 12px; display: flex; gap: 8px;"></div>
+            </div>
+
+            <!-- Promotional Banner Section -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 30px 0;">
+                <div style="background: linear-gradient(135deg, #d9b24a, #a67c38); padding: 20px; border-radius: 10px; color: #000; text-align: center;">
+                    <h3 style="margin: 0; font-size: 1.5rem;">🏆</h3>
+                    <p style="margin: 5px 0; font-weight: 600;">Award Winning</p>
+                    <p style="margin: 0; font-size: 0.9rem;">Most Trusted Brand</p>
+                </div>
+                <div style="background: linear-gradient(135deg, #3a5f7f, #254057); padding: 20px; border-radius: 10px; color: #fff; text-align: center;">
+                    <h3 style="margin: 0; font-size: 1.5rem;">🚀</h3>
+                    <p style="margin: 5px 0; font-weight: 600;">Fast Shipping</p>
+                    <p style="margin: 0; font-size: 0.9rem;">2-3 Days Delivery</p>
+                </div>
+                <div style="background: linear-gradient(135deg, #2d5a3d, #1a3a23); padding: 20px; border-radius: 10px; color: #fff; text-align: center;">
+                    <h3 style="margin: 0; font-size: 1.5rem;">💰</h3>
+                    <p style="margin: 5px 0; font-weight: 600;">Best Price</p>
+                    <p style="margin: 0; font-size: 0.9rem;">Price Match Guarantee</p>
+                </div>
+            </div>
+
+            <!-- Featured Products Count -->
+            <div style="margin-bottom:20px;">
+                <div class="product-count">
+                    <span>📦 Showing <strong id="productCount">0</strong> products</span>
+                    <span style="color: var(--gold);">✨ Free Delivery on Orders > ৳2000</span>
+                </div>
+            </div>
+
+            <!-- Featured Product Section -->
+            <div id="featuredSection" style="display: none; background: linear-gradient(135deg, var(--gold), #c4962e); border-radius: 10px; padding: 30px; margin-bottom: 40px; box-shadow: 0 8px 25px rgba(217, 178, 74, 0.3);">
+                <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; align-items: center;">
+                    <div style="text-align: center;">
+                        <div style="background: #000; border-radius: 10px; padding: 20px; display: flex; align-items: center; justify-content: center; min-height: 300px;">
+                            <img id="featuredImage" src="" alt="Featured Product" style="max-width: 100%; max-height: 280px; object-fit: cover; border-radius: 8px;" />
+                        </div>
+                    </div>
+                    <div style="color: #000;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <h2 style="margin: 0; font-size: 2rem; color: #000;">🌟 Featured Product</h2>
+                        </div>
+                        <h1 id="featuredName" style="margin: 10px 0 20px 0; font-size: 2rem; color: #000;"></h1>
+                        <p id="featuredDesc" style="margin: 15px 0; font-size: 1rem; color: #1a1a1a; line-height: 1.6;"></p>
+                        <div style="margin: 20px 0; padding: 15px 0; border-top: 2px solid rgba(0,0,0,0.2); border-bottom: 2px solid rgba(0,0,0,0.2);">
+                            <div style="display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px;">
+                                <span style="font-size: 0.9rem; color: #1a1a1a;">Price:</span>
+                                <span id="featuredPrice" style="font-size: 1.8rem; font-weight: bold; color: #000;"></span>
+                                <span id="featuredOriginal" style="font-size: 1.1rem; color: #1a1a1a; text-decoration: line-through;"></span>
+                            </div>
+                            <div style="color: #1a1a1a; font-size: 0.95rem; font-weight: 600;">
+                                💯 Rating: <span id="featuredRating" style="color: var(--gold);">5/5</span> | 📊 <span id="featuredSales" style="color: var(--gold);">0</span> customers already bought!
+                            </div>
+                        </div>
+                        <button class="cta" id="featuredAddBtn" style="width: 100%; padding: 15px; font-size: 1.1rem; margin-top: 20px; background: #000; color: var(--gold); border: 2px solid var(--gold);">
+                            ⭐ Add This Elite Product to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="grid"></div>
+
+            <!-- Testimonials & Support Section -->
+            <div style="margin: 50px 0; padding: 30px; background: linear-gradient(135deg, #1a1a1a, #0f0f0f); border-radius: 10px; border-left: 4px solid var(--gold);">
+                <h2 style="color: var(--gold); margin-top: 0; text-align: center;">⭐ Customer Reviews</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div style="background: #111; padding: 20px; border-radius: 8px; border: 1px solid #222;">
+                        <div style="color: var(--gold); margin-bottom: 10px;">⭐⭐⭐⭐⭐</div>
+                        <p style="margin: 10px 0; color: #ccc;">Excellent quality products! Delivery was fast and the customer service is amazing.</p>
+                        <p style="margin: 10px 0 0 0; color: var(--gold); font-weight: 600;">- Fatima Ahmed</p>
+                    </div>
+                    <div style="background: #111; padding: 20px; border-radius: 8px; border: 1px solid #222;">
+                        <div style="color: var(--gold); margin-bottom: 10px;">⭐⭐⭐⭐⭐</div>
+                        <p style="margin: 10px 0; color: #ccc;">Best online shopping experience in Bangladesh. Highly recommended!</p>
+                        <p style="margin: 10px 0 0 0; color: var(--gold); font-weight: 600;">- Rajib Khan</p>
+                    </div>
+                    <div style="background: #111; padding: 20px; border-radius: 8px; border: 1px solid #222;">
+                        <div style="color: var(--gold); margin-bottom: 10px;">⭐⭐⭐⭐⭐</div>
+                        <p style="margin: 10px 0; color: #ccc;">Original products at reasonable prices. Will definitely shop again!</p>
+                        <p style="margin: 10px 0 0 0; color: var(--gold); font-weight: 600;">- Nadia Sultana</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Support Section -->
+            <div style="margin: 50px 0; padding: 40px; background: linear-gradient(135deg, #1a2f3a, #0f1a24); border-radius: 10px; border: 2px solid #333; text-align: center;">
+                <h2 style="color: var(--gold); margin-top: 0; font-size: 1.8rem;">📞 Need Assistance?</h2>
+                <p style="color: var(--muted); margin: 15px 0; font-size: 1rem;">We're here to help with returns, exchanges, and any other support you need.</p>
+                <div style="background: rgba(217, 178, 74, 0.1); padding: 25px; border-radius: 10px; border-left: 4px solid var(--gold); margin: 20px 0;">
+                    <p style="color: #fff; margin: 10px 0; font-size: 1.05rem;">📧 <strong>Email:</strong> <span style="color: var(--gold);">support@elitemart.bd</span></p>
+                    <p style="color: var(--muted); margin: 5px 0; font-size: 0.95rem;">⏰ Available: Monday - Saturday, 10 AM - 6 PM (Bangladesh Time)</p>
+                    <p style="color: var(--muted); margin: 15px 0 0 0; font-size: 0.9rem;">✓ For returns & exchanges | ✓ Account & login issues | ✓ General inquiries</p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <footer>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; padding: 40px 20px; border-bottom: 1px solid #222;">
+            <div>
+                <h3 style="color: var(--gold); margin-bottom: 15px;">About EliteMart BD</h3>
+                <p style="color: #ccc; font-size: 0.9rem;">Your trusted online shopping destination for premium fashion and gadgets in Bangladesh. Quality guaranteed, price assured.</p>
+            </div>
+            <div>
+                <h3 style="color: var(--gold); margin-bottom: 15px;">Quick Links</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 8px;"><a href="#" style="color: #ccc; text-decoration: none;">Shop Now</a></li>
+                    <li style="margin-bottom: 8px;"><a href="#" style="color: #ccc; text-decoration: none;">Track Order</a></li>
+                    <li style="margin-bottom: 8px;"><a href="#" style="color: #ccc; text-decoration: none;">Contact Us</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 style="color: var(--gold); margin-bottom: 15px;">Contact Info</h3>
+                <p style="color: #ccc; font-size: 0.9rem;">📧 support@elitemart.bd<br>📞 +880 1908230384<br>🕐 24/7 Customer Support</p>
+            </div>
+        </div>
+        <div style="text-align: center; padding: 20px; color: #666; font-size: 0.9rem;">
+            © 2025 EliteMart BD • Trusted Fashion & Lifestyle • Cash on Delivery Available Nationwide
+        </div>
+    </footer>
+
+    <!-- Product Detail Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content"></div>
+    </div>
+
+    <script src="toast.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Show customer name or Login link in header
+        (function(){
+            const area = document.getElementById('customerArea');
+            if(!area) return;
+            const logged = sessionStorage.getItem('customerLoggedIn');
+            const name = sessionStorage.getItem('customerName');
+            if(logged === 'true'){
+                area.innerHTML = `<a class="badge" href="orders.html" title="My orders">👤 ${name||'Account'}</a><a class="badge" href="#" id="custLogout">🚪 Logout</a>`;
+                const lo = document.getElementById('custLogout');
+                lo && lo.addEventListener('click',(e)=>{ e.preventDefault(); sessionStorage.removeItem('customerLoggedIn'); sessionStorage.removeItem('customerEmail'); sessionStorage.removeItem('customerName'); location.reload(); });
+            } else {
+                area.innerHTML = `<a class="badge" href="customer-login.html?next=index.html">🔐 Login</a>`;
+            }
+        })();
+    </script>
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+    </style>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!-- File Selection Enhancement for Admin Panel -->
+<!-- Add this to your mr_admin_login.html inside the <head> section -->
+
+<style>
+    .file-input-btn {
+        background: linear-gradient(135deg, #0066cc, #0052a3);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .file-input-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 102, 204, 0.3);
+    }
+
+    .file-input-btn:active {
+        transform: translateY(0);
+    }
+
+    .file-status {
+        display: inline-block;
+        color: #4caf50;
+        font-size: 0.9rem;
+        margin-left: 10px;
+        font-weight: 600;
+    }
+
+    .file-preview-container {
+        margin-top: 15px;
+        padding: 15px;
+        background: #0f0f0f;
+        border: 1px solid #333;
+        border-radius: 8px;
+        display: none;
+    }
+
+    .file-preview-container.active {
+        display: block;
+    }
+
+    .preview-gallery {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+
+    .preview-item {
+        position: relative;
+        text-align: center;
+    }
+
+    .preview-item img,
+    .preview-item video {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1px solid #333;
+        display: block;
+    }
+
+    .preview-item-name {
+        font-size: 0.75rem;
+        color: #999;
+        margin-top: 5px;
+        max-width: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
+<!-- Replace the old product form section with this: -->
+
+<div id="addProductForm" style="display: none; background: linear-gradient(135deg, #0f0f0f, #0b0b0b); border: 1px solid #222; padding: 25px; border-radius: 10px; margin-bottom: 30px;">
+    <h2 style="color: var(--gold); margin-top: 0;">➕ Add New Product</h2>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div>
+            <label style="display: block; color: var(--gold); margin-bottom: 8px; font-weight: 600;">Product Name *</label>
+            <input id="productName" type="text" placeholder="e.g., Massage Gun Pro" style="width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px; font-family: Poppins;">
+        </div>
+        <div>
+            <label style="display: block; color: var(--gold); margin-bottom: 8px; font-weight: 600;">Category *</label>
+            <select id="productCategory" style="width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px; font-family: Poppins;">
+                <option value="">Select category</option>
+                <option value="gadgets">Gadgets</option>
+                <option value="fashion">Fashion</option>
+                <option value="accessories">Accessories</option>
+                <option value="men">Men</option>
+                <option value="women">Women</option>
+            </select>
+        </div>
+        <div>
+            <label style="display: block; color: var(--gold); margin-bottom: 8px; font-weight: 600;">Price (৳) *</label>
+            <input id="productPrice" type="number" placeholder="Selling price" style="width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px; font-family: Poppins;">
+        </div>
+        <div>
+            <label style="display: block; color: var(--gold); margin-bottom: 8px; font-weight: 600;">Original Price (৳)</label>
+            <input id="productOriginal" type="number" placeholder="Original price (for discount)" style="width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px; font-family: Poppins;">
+        </div>
+        <div>
+            <label style="display: block; color: var(--gold); margin-bottom: 8px; font-weight: 600;">Rating (0-5) *</label>
+            <input id="productRating" type="number" step="0.1" min="0" max="5" placeholder="e.g., 4.5" style="width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px; font-family: Poppins;">
+        </div>
+    </div>
+
+    <!-- Primary Image Selection -->
+    <div style="margin-top: 20px;">
+        <label style="display: block; color: var(--gold); margin-bottom: 8px; font-weight: 600;">Primary Image * (Click to select from computer)</label>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <input id="productImageFile" type="file" accept="image/*" style="display: none;" onchange="fileHandler.handlePrimaryImageSelection(event)">
+            <button type="button" class="file-input-btn" onclick="document.getElementById('productImageFile').click();">
+                🖼️ Choose Primary Image
+            </button>
+            <span id="productImageFileName" class="file-status">No file selected</span>
+        </div>
+        <input id="productImage" type="hidden">
+        <div id="primaryImagePreview" class="file-preview-container"></div>
+    </div>
+
+    <!-- Additional Images Selection -->
+    <div style="margin-top: 20px;">
+        <label style="display: block; color: var(--gold); margin-bottom: 8px; font-weight: 600;">Additional Images (optional - select multiple)</label>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+            <input id="additionalImagesFiles" type="file" accept="image/*" multiple style="display: none;" onchange="fileHandler.handleAdditionalImagesSelection(event)">
+            <button type="button" class="file-input-btn" onclick="document.getElementById('additionalImagesFiles').click();">
+                🖼️ Choose Additional Images
+            </button>
+            <span id="additionalImagesFileName" class="file-status">No files selected</span>
+        </div>
+        <div id="additionalImagesPreview" class="file-preview-container"></div>
+    </div>
+
+    <!-- Video Selection -->
+    <div style="margin-top: 20px;">
+        <label style="display: block; color: var(--gold); margin-bottom: 8px; font-weight: 600;">Demo Video (optional)</label>
+        <p style="color: #999; font-size: 0.9rem; margin: 0 0 10px 0;">Upload MP4 or WebM video file, or enter YouTube embed URL</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <!-- File Upload Option -->
+            <div>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 10px;">
+                    <input id="productVideoFile" type="file" accept="video/*" style="display: none;" onchange="fileHandler.handleVideoSelection(event)">
+                    <button type="button" class="file-input-btn" onclick="document.getElementById('productVideoFile').click();">
+                        🎬 Upload Video File
+                    </button>
+                    <span id="productVideoFileName" class="file-status">No file selected</span>
+                </div>
+                <div id="videoPreview" class="file-preview-container"></div>
+            </div>
+            <!-- YouTube URL Option -->
+            <div>
+                <label style="display: block; color: #ccc; margin-bottom: 8px; font-size: 0.9rem;">OR YouTube Embed URL:</label>
+                <input id="productVideoYouTube" type="text" placeholder="https://www.youtube.com/embed/..." style="width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px; font-family: Poppins;">
+            </div>
+        </div>
+        <input id="productVideo" type="hidden">
+    </div>
+
+    <!-- Description -->
+    <div style="margin-top: 20px;">
+        <label style="display: block; color: var(--gold); margin-bottom: 8px; font-weight: 600;">Description *</label>
+        <textarea id="productDescription" placeholder="Enter product description" style="width: 100%; padding: 12px; background: #111; border: 1px solid #333; color: #fff; border-radius: 6px; font-family: Poppins; resize: vertical; min-height: 100px;"></textarea>
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button onclick="addNewProduct()" style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">✓ Add Product</button>
+        <button onclick="toggleAddProductForm()" style="background: #666; color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.background='#888'" onmouseout="this.style.background='#666'">✕ Cancel</button>
+    </div>
+</div>
+
+<script src="toast.js"></script>
+<script src="file-handler.js"></script>

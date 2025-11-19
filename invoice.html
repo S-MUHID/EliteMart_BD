@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EliteMart BD - Order Invoice</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background: #1a1a1a;
+        }
+
+        .invoice-container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: #fff;
+            color: #333;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .invoice-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #d9b24a;
+        }
+
+        .invoice-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .invoice-logo-mark {
+            width: 60px;
+            height: 60px;
+            background: #d9b24a;
+            color: #000;
+            font-weight: 700;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .invoice-logo h1 {
+            margin: 0;
+            color: #d9b24a;
+            font-size: 1.8rem;
+        }
+
+        .invoice-title {
+            text-align: right;
+        }
+
+        .invoice-title h2 {
+            margin: 0;
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .invoice-title p {
+            margin: 5px 0 0 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .invoice-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .invoice-section h3 {
+            color: #d9b24a;
+            margin: 0 0 15px 0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .invoice-section p {
+            margin: 5px 0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .invoice-section .label {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 2px;
+        }
+
+        .order-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .info-box {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: 600;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: 700;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+        }
+
+        .items-table thead {
+            background: #f5f5f5;
+            border-top: 2px solid #d9b24a;
+            border-bottom: 2px solid #d9b24a;
+        }
+
+        .items-table th {
+            padding: 15px;
+            text-align: left;
+            color: #333;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .items-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+            color: #333;
+        }
+
+        .items-table tbody tr:last-child td {
+            border-bottom: 2px solid #d9b24a;
+        }
+
+        .item-name {
+            font-weight: 600;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .summary-section {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 40px;
+        }
+
+        .summary-box {
+            width: 350px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            color: #333;
+        }
+
+        .summary-row.total {
+            background: #d9b24a;
+            color: #000;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .invoice-notes {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 40px;
+        }
+
+        .invoice-notes h3 {
+            margin: 0 0 10px 0;
+            color: #d9b24a;
+            font-size: 0.9rem;
+        }
+
+        .invoice-notes p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .invoice-footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .print-button {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .btn-print {
+            background: #d9b24a;
+            color: #000;
+        }
+
+        .btn-print:hover {
+            background: #e8c355;
+        }
+
+        .btn-back {
+            background: #333;
+            color: #fff;
+        }
+
+        .btn-back:hover {
+            background: #555;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .status-pending {
+            background: #fffbeb;
+            color: #b45309;
+        }
+
+        .status-confirmed {
+            background: #ecfdf5;
+            color: #065f46;
+        }
+
+        .status-shipped {
+            background: #eff6ff;
+            color: #0c4a6e;
+        }
+
+        .status-delivered {
+            background: #ecfdf5;
+            color: #065f46;
+        }
+
+        .status-cancelled {
+            background: #fef2f2;
+            color: #7f1d1d;
+        }
+
+        @media print {
+            body {
+                background: #fff;
+            }
+
+            .invoice-container {
+                margin: 0;
+                padding: 0;
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            .print-button {
+                display: none;
+            }
+
+            header {
+                display: none;
+            }
+
+            footer {
+                display: none;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .invoice-container {
+                padding: 20px;
+            }
+
+            .invoice-header {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .invoice-details {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .order-info {
+                grid-template-columns: 1fr;
+            }
+
+            .items-table {
+                font-size: 0.9rem;
+            }
+
+            .items-table th,
+            .items-table td {
+                padding: 10px;
+            }
+
+            .summary-box {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header style="display: none;"></header>
+
+    <div class="invoice-container">
+        <div class="print-button">
+            <button class="btn btn-print" onclick="window.print()">🖨️ Print Invoice</button>
+            <button class="btn btn-back" onclick="goBack()">← Back</button>
+        </div>
+
+        <div class="invoice-header">
+            <div class="invoice-logo">
+                <div class="invoice-logo-mark">EM</div>
+                <div>
+                    <h1>EliteMart BD</h1>
+                    <p style="color: #666; margin: 0;">Fashion & Lifestyle Store</p>
+                </div>
+            </div>
+            <div class="invoice-title">
+                <h2>INVOICE</h2>
+                <p id="invoiceNumber"></p>
+            </div>
+        </div>
+
+        <div class="invoice-details">
+            <div>
+                <h3>Bill To</h3>
+                <p id="billTo"></p>
+                <p id="billPhone" class="label"></p>
+                <p id="billEmail" class="label"></p>
+            </div>
+            <div>
+                <h3>Ship To</h3>
+                <p id="shipTo"></p>
+            </div>
+        </div>
+
+        <div class="order-info">
+            <div class="info-box">
+                <span class="info-label">Order Date:</span>
+                <span class="info-value" id="orderDate"></span>
+            </div>
+            <div class="info-box">
+                <span class="info-label">Order Status:</span>
+                <span id="orderStatus"></span>
+            </div>
+            <div class="info-box">
+                <span class="info-label">Payment Method:</span>
+                <span class="info-value" id="paymentMethod"></span>
+            </div>
+            <div class="info-box">
+                <span class="info-label">Delivery Type:</span>
+                <span class="info-value">Cash on Delivery</span>
+            </div>
+        </div>
+
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Item Description</th>
+                    <th style="width: 80px;" class="text-right">Quantity</th>
+                    <th style="width: 100px;" class="text-right">Unit Price</th>
+                    <th style="width: 100px;" class="text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody id="itemsBody">
+            </tbody>
+        </table>
+
+        <div class="summary-section">
+            <div class="summary-box">
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span id="subtotal"></span>
+                </div>
+                <div class="summary-row">
+                    <span>Discount</span>
+                    <span id="discount"></span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span>FREE</span>
+                </div>
+                <div class="summary-row total">
+                    <span>TOTAL AMOUNT</span>
+                    <span id="totalAmount"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="invoice-notes">
+            <h3>📝 Order Notes</h3>
+            <p id="orderNotes">Thank you for your order! We will process it within 24 hours. You will receive a confirmation call on the provided phone number.</p>
+        </div>
+
+        <div class="invoice-notes" style="background: #ecfdf5; border-left: 4px solid #10b981;">
+            <h3 style="color: #059669; margin: 0 0 10px 0;">✓ Terms & Conditions</h3>
+            <p style="margin: 0; color: #666; font-size: 0.85rem;">
+                • 7 Days money-back guarantee if product is damaged<br>
+                • Free replacement within 7 days of delivery<br>
+                • All products are 100% genuine<br>
+                • We accept Cash on Delivery payment method<br>
+                • For any queries, contact us at support@elitemart.bd
+            </p>
+        </div>
+
+        <div class="invoice-footer">
+            <p>© 2025 EliteMart BD. All rights reserved. Thank you for shopping with us!</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        function getOrderIdFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        function getOrders() {
+            return JSON.parse(localStorage.getItem('orders')) || [];
+        }
+
+        function loadInvoice() {
+            const orderId = getOrderIdFromURL();
+            const orders = getOrders();
+            const order = orders.find(o => o.id === orderId);
+
+            if (!order) {
+                document.querySelector('.invoice-container').innerHTML = '<h2 style="text-align: center; color: #d9b24a;">Order not found</h2>';
+                return;
+            }
+
+            // Fill invoice details
+            document.getElementById('invoiceNumber').textContent = `Order #${order.id}`;
+            document.getElementById('orderDate').textContent = order.date;
+
+            // Bill To
+            const billToText = `${order.customer.firstName} ${order.customer.lastName}`;
+            document.getElementById('billTo').textContent = billToText;
+            document.getElementById('billPhone').textContent = order.customer.phone;
+            document.getElementById('billEmail').textContent = order.customer.email;
+
+            // Ship To
+            const shipToText = `${order.customer.address}\n${order.customer.city}, ${order.customer.postalCode}`;
+            document.getElementById('shipTo').innerHTML = shipToText.replace(/\n/g, '<br>');
+
+            // Payment Method
+            const paymentMethods = {
+                'cod': '💵 Cash on Delivery',
+                'bkash': '🔵 bKash',
+                'nagad': '🟠 Nagad',
+                'card': '💳 Credit/Debit Card'
+            };
+            document.getElementById('paymentMethod').textContent = paymentMethods[order.payment] || order.payment;
+
+            // Order Status
+            const statusClass = `status-${order.status.toLowerCase()}`;
+            document.getElementById('orderStatus').innerHTML = `<span class="status-badge ${statusClass}">${order.status}</span>`;
+
+            // Items
+            const itemsBody = document.getElementById('itemsBody');
+            const subtotal = order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const discount = order.items.reduce((sum, item) => sum + ((item.original - item.price) * item.quantity), 0);
+
+            itemsBody.innerHTML = order.items.map(item => `
+                <tr>
+                    <td class="item-name">${item.name}</td>
+                    <td class="text-right">${item.quantity}</td>
+                    <td class="text-right">৳${item.price.toLocaleString()}</td>
+                    <td class="text-right">৳${(item.price * item.quantity).toLocaleString()}</td>
+                </tr>
+            `).join('');
+
+            // Summary
+            document.getElementById('subtotal').textContent = `৳${subtotal.toLocaleString()}`;
+            document.getElementById('discount').textContent = `-৳${discount.toLocaleString()}`;
+            document.getElementById('totalAmount').textContent = `৳${order.total.toLocaleString()}`;
+
+            // Order Notes
+            if (order.notes) {
+                document.getElementById('orderNotes').textContent = order.notes;
+            }
+
+            // Set page title
+            document.title = `Invoice - ${order.id}`;
+        }
+
+        function goBack() {
+            // Check if coming from admin
+            if (document.referrer.includes('mr_admin_login.html')) {
+                history.back();
+            } else {
+                window.location.href = 'orders.html';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadInvoice);
+    </script>
+</body>
+</html>
